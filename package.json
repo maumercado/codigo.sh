@@ -1,6 +1,6 @@
 {
-  "name": "TODO",
-  "description": "TODO",
+  "name": "Codigo",
+  "description": "Opinions and blog posts",
   "version": "0.0.1",
   "scripts": {
     "dev": "sapper dev",
@@ -11,6 +11,11 @@
     "cy:open": "cypress open",
     "test": "run-p --race dev cy:run"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/maumercado/codigo.sh.git"
+  },
+  "author": "Mauricio Mercado <me@maumercado.com>",
   "dependencies": {
     "compression": "^1.7.1",
     "date-fns": "^2.11.0",
