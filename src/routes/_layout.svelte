@@ -18,7 +18,7 @@
     background-color: white;
     padding: 1em 2em;
     box-sizing: border-box;
-    width: 40%;
+    width: 60%;
     display: flex;
     flex-direction: column;
   }
