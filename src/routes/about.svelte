@@ -29,6 +29,6 @@
   <p>
     I’ve been software engineer for almost 9+ years now, I started with Python and Python/Django,
     then Ruby and Ruby on Rails, and lastly Javascript, focusing mostly on the server side with NodeJS.
-    I love new challenges and always striving to learn new things!.
+    I love new challenges and always striving to learn new things!
   </p>
 </div>
