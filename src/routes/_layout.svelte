@@ -16,12 +16,25 @@
     margin: 0 auto;
     max-width: 1400px;
     background-color: white;
-    padding: 1em 2em;
+    padding: 1em 1.5em;
     box-sizing: border-box;
-    width: 60%;
+    width: 80%;
     display: flex;
     flex-direction: column;
   }
+
+   @media (max-width: 1020px) {
+    main {
+      width: 90%;
+    }
+  }
+  @media (max-width: 800px) {
+    main {
+      width: 100%;
+    }
+
+  }
+
   footer {
     color: #AAA;
     font-size: 1em;

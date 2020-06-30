@@ -9,11 +9,7 @@ Opinions on error handling with javascript.
 
 ### Throw early, throw fast!
 
-As developers, it becomes second nature to attempt to handle errors in an application, especially if it is user-facing since we want our users to have a smooth experience. However, it is hard to account for all cases that might arise when using such an interface.
-
-When building APIs or full-blown applications, it is also essential to recognize that there are errors beyond our control and that sometimes erroring becomes crucial.
-
-Unnecessary error handling can lead to more lines of code than initially required, which, by extension, can lead to more errors.
+As developers, it becomes second nature to attempt to handle most errors in an application, which might lead the creation of interfaces that simply do not fail (error hiding), which leads to longer and harder to debug code when used by other developers.
 
 Let's see an example.
 
@@ -33,15 +29,15 @@ async function doMagicalThing (arg) {
 
 That looks pretty neat, right? Yes, and no; There are different problems with such an interface.
 * How does a user know what the correct argument is
-* It ultimately sets the responsibility of handling errors to the API user, which is unaware of what those might be unless it completely understands what the function is doing internally.
-* The user is not aware that the handling of errors is up to its code.
+* It ultimately sets the responsibility of handling errors to developers using this API, since they will are unaware of what those errors might be, unless they completely understand what the function is doing internally.
+* A developer using this API, is also completely unaware that the handling of errors is up to its code.
 * It necessarily requires more code to use such an API.
 * Debugging this type of API can be daunting for the user must be aware of the context, and functionality that the original author desired.
 
-Here's a representation on how the code that uses such an API might look like:
+Here's a representation on how the code that uses `doMagicalThing` might look like:
 
 ```js
-async function main () {
+async function mainUserOfMagic () {
 	const [err, result] = await doMagicalThing('something')
 	if (err) {
 		// Im guessing nothing happens here?
@@ -58,7 +54,7 @@ async function main () {
 }
 ```
 
-Now let's see a simpler version of the code above.
+Now let’s see a version of the `doMagicalThing` function with a simpler API
 
 ```js
 async function failsFast (arg) {
