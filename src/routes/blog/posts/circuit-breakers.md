@@ -73,7 +73,7 @@ check for the availability of the service once more.
 it resets the failure counter and the timeout.
 
 
-![Circuit Breaker Diagram](circuit-breaker-schema.png "Circuit Breaker Diagram")
+![Circuit Breaker Diagram](circuit-breaker-diagram.png "Circuit Breaker Diagram")
 
 ## Usage and customizations
 
