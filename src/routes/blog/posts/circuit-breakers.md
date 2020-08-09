@@ -7,14 +7,11 @@ The Circuit Breaker Design Pattern - A tool that would prove invaluable when dea
 
 <!-- more -->
 
-Commonly, making remote calls it's a natural part of any system created, but those system can fail by any number of reasons.
-The circuit breaker design pattern can help in these specific types of failures.
+In the previous post, [Failing successfully](failing-successfully.md), it was shown that the best strategy when dealing with unknown errors was to fail properly and "noisily", instead of hiding them. 
+This post will demonstrate how to properly handle failures when attempting to obtain information or execute procedures on a remote/external API.
 
-### Handling remote API failures
-
-In the previous post [Failing successfully](./failing-successfully.md), it was shown that
-the best strategy, when dealing with unknown errors, was to fail properly, and "noisily", instead than hiding them. 
-This post will demonstrate how to properly handle failures when attempting to obtain information, or execute procedures on a remote/external API.
+In a microservice architecture, any of our services can fail by any number of reasons. When a service that a remote system depends on fails, such failures can be observed as hanging calls, timeouts, unexpected disconnections, which would translate to poor user experience or even very slow transactions.
+The circuit breaker design pattern is beneficial when dealing with remote system invocation errors.
 
 ## What is a circuit breaker
 
@@ -23,8 +20,8 @@ This post will demonstrate how to properly handle failures when attempting to ob
 > or unexpected system difficulties.
 > -- [Wikipedia Circuit Breaker](https://en.wikipedia.org/wiki/Circuit_breaker_design_pattern)
 
-If you are familiar with the concept of circuit breakers from electrical engineer, be aware of comparing that circuit breaker, 
-with the software definition of it, since it's software analog, its simply smarter.
+If you are familiar with the concept of circuit breakers from electrical engineer, be aware of comparing that type of circuit breaker, 
+with the software definition of it.
 
 ## So how does it work?
 
@@ -37,9 +34,10 @@ A circuit breaker has 3 states:
 This states have a set of variables to let allow the circuit breaker to make proper decisions on when to forward a request
 or when to use a cached response or even when to simply fail the request to the service, without even attempting to connect to it.
 
-The variables for this state are, a failure count which as its name implies keeps count of how many times a service has failed
-to reply, a threshold of failures, which is simply a maximum amount of times an external service is allowed to fail, and a timeout value, 
-which is the time in which a service should reply successfully.
+A circuit breaker contains a list of variables that allow it to change into a specific state.
+* failure count -  keeps count of how many times a service has failed
+* failure threshold - maximum amount of times an external service is allowed to fail.
+* timeout value - the time in which the circuit breaker allows remote requests to the previously failed service.
 
 ### Closed state
 
@@ -51,6 +49,8 @@ the following steps:
 3. If the call fails however, it will increment the failure count by 1, and compare
 with the maximum threshold of allowed fails.
 4. If the fail counter is greater than the maximum allowed failures, then the circuit is opened.
+
+![Circuit Breaker Diagram - Closed State](closed-circuit.png "Circuit Breaker Diagram - Closed State")
 
 ### Open state
 
@@ -64,6 +64,8 @@ This state behaves like so:
 value of a previous request.
 3. Once the timeout has passed the circuit breaker goes to half open state.
 
+![Circuit Breaker Diagram - Open State](open-circuit.png "Circuit Breaker Diagram - Open State")
+
 ### Half open state
 
 1. In this state, the circuit breaker will allow for request to be made to the external service
@@ -71,7 +73,6 @@ value of a previous request.
 check for the availability of the service once more.
 3. If the request succeeds then the circuit is closed, allowing for new requests to be made,
 it resets the failure counter and the timeout.
-
 
 ![Circuit Breaker Diagram](circuit-breaker-diagram.png "Circuit Breaker Diagram")
 
@@ -83,7 +84,8 @@ Imagine creating a web service, the service in order to obtain any information o
 needs to make a request to an external service.
 
 In  normal circumstances whenever this service fail, one scenario is that the user will see an error, 
-after a certain amount of time, let's say 30 seconds. 
+after a certain amount of time, let's say 30 seconds.
+
 What could also happen is that the user becomes desperate and creates request for the same information,
 several times, opening sockets to the external services that will remain open for, let's assume another 30 seconds.
 
@@ -95,20 +97,27 @@ The reason the backend system is also affected is because there is a number of c
 of microservices, that will close only after 30 seconds, depending obviously on what language used by this service,
 the system settings etc.
 
+![Example without circuit breaker](no-circuit-breaker-example.gif "Example without circuit breaker")
+
 Enter circuit breakers, with a simple one, your user will most likely see the first request as an error, and wait for
 whatever the timeout threhold set for the circuit breaker to close the connection, and depending on the behaviour configured
 by your circuit breaker, the user can even get a cached copy of the response, or your circuit breaker can even reply
 immediatly with an error, which reduces the number of connections that would open on the backend if that wasn't the case,
 and provides the user with a much faster experience, even tho' it might not be the desired one.
 
+![Example with circuit breaker](example-with-circuit-breaker.gif "Example with circuit breaker")
+
+## Code example
+
 The circuit breaker it's written as a singleton, since it maintains the same state for all requests done by your application,
 it would be pointless if a new instance is created every time a request were to be made, because the state would always then
 be closed, which is the initial state of the circuit breaker.
 
-## Code example
+You can see an implementation of the circuit breaker in NodeJS and an example slow service at codesandbox.
 
-I made a presentation on the circuit breaker a while back, and the presentation contains a simple example of the circuit breaker
-implementation in nodeJS. You can see that presentation [here](https://cbr.maumercado.com)
+For the circuit breaker implementation click [here](https://codesandbox.io/s/interesting-hugle-sn77c?file=/src/CircuitBreaker.js)
+
+I made a presentation on the circuit breaker a while back that you can see [here](https://cbr.maumercado.com/)
 
 ## Conclusion
 
@@ -123,3 +132,10 @@ The circuit breaker has 3 states:
 * Half Open
 
 It uses the singleton pattern in order to have a global knowledge of the external services states in the entire application.
+
+## Shoutout and Bibliography
+
+* Martin Fowlers excelent article on [circuit breakers](https://martinfowler.com/bliki/CircuitBreaker.html)
+* [Matthew Cantelon](https://www.matthewcantelon.ca/), for helping me out making this a more readable/better blog post. 
+
+Also read Matt's excellent post about [service mesh](https://www.matthewcantelon.ca/blog/intro-to-service-mesh/)
