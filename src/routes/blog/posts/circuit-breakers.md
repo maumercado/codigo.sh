@@ -1,5 +1,5 @@
 ---
-title: Circuit Breaker 
+title: Circuit Breaker
 date: 2020-07-29T17:51:00.000Z
 ---
 
@@ -7,7 +7,7 @@ The Circuit Breaker Design Pattern - A tool that would prove invaluable when dea
 
 <!-- more -->
 
-In the previous post, [Failing successfully](failing-successfully.md), it was shown that the best strategy when dealing with unknown errors was to fail properly and "noisily", instead of hiding them. 
+In the previous post, [Failing successfully](failing-successfully.md), it was shown that the best strategy when dealing with unknown errors was to fail properly and "noisily", instead of hiding them.
 This post will demonstrate how to properly handle failures when attempting to obtain information or execute procedures on a remote/external API.
 
 In a microservice architecture, any of our services can fail by any number of reasons. When a service that a remote system depends on fails, such failures can be observed as hanging calls, timeouts, unexpected disconnections, which would translate to poor user experience or even very slow transactions.
@@ -15,12 +15,12 @@ The circuit breaker design pattern is beneficial when dealing with remote system
 
 ## What is a circuit breaker
 
-> A Circuit breaker is a design pattern used in modern software development. It is used to detect failures and encapsulates the 
-> logic of preventing a failure from constantly recurring, during maintenance, temporary external system failure 
+> A Circuit breaker is a design pattern used in modern software development. It is used to detect failures and encapsulates the
+> logic of preventing a failure from constantly recurring, during maintenance, temporary external system failure
 > or unexpected system difficulties.
 > -- [Wikipedia Circuit Breaker](https://en.wikipedia.org/wiki/Circuit_breaker_design_pattern)
 
-If you are familiar with the concept of circuit breakers from electrical engineer, be aware of comparing that type of circuit breaker, 
+If you are familiar with the concept of circuit breakers from electrical engineer, be aware of comparing that type of circuit breaker,
 with the software definition of it.
 
 ## So how does it work?
@@ -60,7 +60,7 @@ it automatically opens the circuit, however, this state can be automatically res
 This state behaves like so:
 
 1. When in this state, no calls to the service are allowed, and a timeout is set
-2. If a client makes a request, the circuit breaker can simply respond with a failure, or a cached 
+2. If a client makes a request, the circuit breaker can simply respond with a failure, or a cached
 value of a previous request.
 3. Once the timeout has passed the circuit breaker goes to half open state.
 
@@ -83,7 +83,7 @@ Whenever dealing with remote services, this is a good pattern to use.
 Imagine creating a web service, the service in order to obtain any information of the current user
 needs to make a request to an external service.
 
-In  normal circumstances whenever this service fail, one scenario is that the user will see an error, 
+In  normal circumstances whenever this service fail, one scenario is that the user will see an error,
 after a certain amount of time, let's say 30 seconds.
 
 What could also happen is that the user becomes desperate and creates request for the same information,
@@ -115,7 +115,8 @@ be closed, which is the initial state of the circuit breaker.
 
 You can see an implementation of the circuit breaker in NodeJS and an example slow service at codesandbox.
 
-For the circuit breaker implementation click [here](https://codesandbox.io/s/interesting-hugle-sn77c?file=/src/CircuitBreaker.js)
+For the circuit breaker implementation click [here](https://codesandbox.io/s/interesting-hugle-sn77c?file=/src/CircuitBreaker.js).
+For the slow app example, you can go [here](https://codesandbox.io/s/stupefied-meitner-llow7)
 
 I made a presentation on the circuit breaker a while back that you can see [here](https://cbr.maumercado.com/)
 
@@ -136,6 +137,6 @@ It uses the singleton pattern in order to have a global knowledge of the externa
 ## Shoutout and Bibliography
 
 * Martin Fowlers excelent article on [circuit breakers](https://martinfowler.com/bliki/CircuitBreaker.html)
-* [Matthew Cantelon](https://www.matthewcantelon.ca/), for helping me out making this a more readable/better blog post. 
+* [Matthew Cantelon](https://www.matthewcantelon.ca/), for helping me out making this a more readable/better blog post.
 
 Also read Matt's excellent post about [service mesh](https://www.matthewcantelon.ca/blog/intro-to-service-mesh/)
